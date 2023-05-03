@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <title>创建群聊：{{userName|safe}}</title>
+	<script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
+ </head>
+ <body>
+    <form method="post" action="/createAndReturn">
+	    <p>群名：<input type=text id="newGroupName" name="newGroupName" value="请输入群名" maxlength="8" size="30"/></p>
+        <p>邀请:
+        {{allUser|safe}}
+        </p>
+	    <p><input type="submit" value="提交"/></p>
+ </body>
+</html>
