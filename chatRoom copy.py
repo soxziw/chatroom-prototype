@@ -1,3 +1,5 @@
+import pymysql
+dbConn=pymysql.connect("login.db",check_same_thread=False)
 from flask import Flask,request,redirect,render_template #新增代码。装入Flask
 
 #用户模块，userMag，用户管理
