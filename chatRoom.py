@@ -2,6 +2,7 @@ import pymysql
 dbConn = pymysql.connect("login.db", check_same_thread=False)
 from flask import Flask, request, redirect, render_template 
 
+
 import groupDB, messageDB, userTab, ugTab, friendsTab
 
 webApp = Flask(__name__) #新增代码

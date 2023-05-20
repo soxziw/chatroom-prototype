@@ -22,30 +22,24 @@ database midterm course project
 
 所有SQL均在下面方法中实现：
 1. 用户表：userID(phone number) name password
-   1. init() : void
-   2. getUser(userID) : dict
-   3. register(userID, name, password) : bool
-   4. login(userID, password) : bool
-   5. changeName(name, optUID) : bool
+   1. getUser(userID) : dict
+   2. register(userID, name, password) : bool
+   3. login(userID, password) : bool
+   4. changeName(name, optUID) : bool
 2. 群-用户表：userID groupID
-   1. init() : void
-   2. buildGroup(userID[], optUID) : bool
-   3. addUser(groupID, userID, optUID) : bool
-   4. deleteUser(groupID, userID, optUID) : bool
-   5. getUID(groupID) : string
-   6. getGID(optUID) : string
-3. 群表：groupID(groupName_timestamp) groupName
-   1. init() : void
-   2. build(groupName) : string(groupID)
-   3. changeName(groupID, optUID) : bool
-4. 消息表：msgID(msg_timestamp) groupID userID msg
-   1. init() : void
-   2. writeMsg(groupID, msg, optUID) : bool
-   3. getGMsg(groupID, optUID) : dict[]
-   4. getGUMsg(groupID, userID, optUID) : dict[]
-   5. getMsg(subMsg, optUID) : dict[]
-5. 好友表：userID userID status
-   1. init() : void
-   2. apply(userID, optUID) : bool
-   3. agree(userID, optUID) : bool
-   4. getFriends(optUID) : dict[]
+   1. addUsers(groupID, userID[], optUID) : bool
+   2. deleteUser(groupID, userID, optUID) : bool
+   3. getUID(groupID) : string[]
+   4. getGID(optUID) : string[]
+<!-- 3. 群表：groupID(groupName_timestamp) groupName
+   1. build(groupName) : string(groupID)
+   2. changeName(groupID, optUID) : bool
+1. 消息表：msgID(msg_timestamp) groupID userID msg
+   1. writeMsg(groupID, msg, optUID) : bool
+   2. getGMsg(groupID, optUID) : dict[]
+   3. getGUMsg(groupID, userID, optUID) : dict[]
+   4. getMsg(subMsg, optUID) : dict[] -->
+2. 好友表：userID friendID status
+   1. apply(userID, optUID) : bool
+   2. agree(userID, optUID) : bool
+   3. getFriends(optUID) : dict[]
