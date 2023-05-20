@@ -1,8 +1,5 @@
-import pymysql
-dbConn = pymysql.connect("login.db", check_same_thread=False)
+from glob import glob
 from flask import Flask, request, redirect, render_template 
-
-
 import groupDB, messageDB, userTab, ugTab, friendsTab
 
 webApp = Flask(__name__) #新增代码
@@ -15,65 +12,44 @@ curUserID = ""
 curGroupName = ""
 curGroupID = ""
 
-'''
+
 @webApp.route("/") #新增代码，对应执行root()函数
 def root():
-	return redirect("/static/Login.html")
+    return redirect("/static/userLogin.html")
 
-@webApp.route("/getUserState",methods=('post',)) #获得用户状态
-def getUserState():
-	userName=request.form["userName"]
+@webApp.route("/login",methods=('post',))
+def login():
+    userID = request.form["userID"]
+    userPassword = request.form["userPassword"]
+    checkState = userTab.login(userID, userPassword)
 
-	#用户名是否存在
-	checkState=userMag.UserNameState(userName)
+    if checkState == True: 
+        global curUserID
+        curUserID = userID
+        print(curUserID)
+    return checkState
 
-	print(checkState)
-	if checkState==True :return '1'
-	else: return '0'
+@webApp.route("/register",methods=('post',))
+def register():
+    userID = request.form["userID"]
+    userName = request.form["userName"]
+    userPassword = request.form["userPassword"]
+    checkState = userTab.register(userID, userName, userPassword)
 
+    if checkState == True: 
+        print(curUserID)
+    return checkState
 
-@webApp.route("/checkUser",methods=('post',)) #用户登录检查
-def checkUser():
-	userName=request.form["userName"]
-	userPassword=request.form["userPWD"]
-
-	#检查用户名密码正确
-	checkState=userMag.UserLogin(userName,userPassword)
-
-	if checkState==True: 
-		global curUserName
-		curUserName=userName
-		print(curUserName)
-		return "登录成功！"
-	return "用户名或密码错误！"
-
-@webApp.route("/addUser",methods=('post',)) #用户注册
-def addUser():
-	userName=request.form["userName"]
-	userPassword=request.form["userPWD"]
-
-	#检查密码长度&用户名是否存在
-	checkState=(len(userPassword)>=8)&(userMag.UserNameState(userName)==False)
-	if checkState==False:
-		return "用户名或密码不符合要求！"
-	
-	#添加注册表
-	addState=userMag.UserAdd(userName,userPassword)
-	if addState==False:return '注册失败！'
-	chat.InitUser(userName)
-	return "注册成功！"
-'''
-
-# 生成群聊选择器
-def groupSelectText(group_id_list, curGroupID):
-	text = ""
-	for group_id in group_id_list:
-		group_name = groupDB.getName(group_id)
-		text = text + "<option value=\"" + group_name +"\" "
-		if group_id == curGroupID:
-			text = text + "selected"
-		text = text + ">" + group_name + "</option>"
-	return text
+#!!!
+def groupSelectText(allGroup,curGroup): #生成群聊选择器
+    l=len(allGroup)
+    text=""
+    for num in range(0,l):
+        text=text+"<option value=\""+allGroup[num][0]+"\" "
+        if allGroup[num][0]==curGroup:
+            text=text+"selected"
+        text=text+">"+allGroup[num][0]+"</option>"
+    return text
 
 # 聊天室
 @webApp.route("/chatRoom")
@@ -174,5 +150,69 @@ def sendAndReturn():
 	data = data + "</div>"
 	return render_template("SearchMsg.html", userName=curUserName, searchData=data)
 
-if __name__ == "__main__":
-	webApp.run(host="0.0.0.0", port=80, debug=True)
+
+@webApp.route("/changeName",methods=('post',))
+def changeName():
+    global curUserID
+    if curUserID == "":
+        return False
+    userName = request.form["userName"]
+    checkState = userTab.changeName(userName, curUserID)
+
+    if checkState == True: 
+        print(userName)
+    return checkState
+
+@webApp.route("/applyFriends",methods=('post',))
+def applyFriends():
+    global curUserID
+    if curUserID == "":
+        return False
+    userID = request.form["userID"]
+    checkState = friendsTab.apply(userID, curUserID)
+
+    if checkState == True: 
+        print(userID)
+    return checkState
+
+@webApp.route("/agreeFriends",methods=('post',))
+def agreeFriends():
+    userID = request.form["userID"]
+    global curUserID
+    if curUserID == "" or curUserID == userID:
+        return False
+    checkState = friendsTab.agree(userID, curUserID)
+
+    if checkState == True: 
+        print(userID)
+    return checkState
+
+@webApp.route("/friends")
+def friends():
+    global curUserID
+    print(curUserID)
+    allFriends = friendsTab.getFriends(curUserID)
+    appData = f"<div class='chatData'>"
+    for friend in allFriends:
+        if friend.status == "UNSET":
+            appData = appData + f"<div type='text' id='app_{friend.friendID}'>{friend.friendID}</div><button id='agree_{friend.friendID}'>同意</button><br>"
+            appData = appData +"""<script type="text/javascript">
+                                    $("#agree_""" + friend.friendID + """").click(function(){
+                                        var userID = $("#app_""" + friend.friendID + """").val();
+                                        $.post("/agreeFriends",{userID:userID},function(rtn){
+                                            if (rtn) {
+                                                alert("添加好友成功！");
+                                                location.reload();
+                                            } else {
+                                                alert("添加好友失败！");
+                                            }
+                                        });
+                                    });
+                                </script>"""
+    appData = appData + "</div>"
+    userName = userTab.getUser(curUserID).userName
+    return render_template("Friends.html",userName=userName,appData=appData)
+
+if __name__=="__main__": #新增代码
+	webApp.run(host="0.0.0.0",port=80,debug=True)
+
