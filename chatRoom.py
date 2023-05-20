@@ -25,7 +25,9 @@ def login():
 
     if checkState == True: 
         global curUserID
+        global curUserName
         curUserID = userID
+        curUserName = userTab.getUser(userID).name
         print(curUserID)
     return checkState
 
@@ -39,6 +41,22 @@ def register():
     if checkState == True: 
         print(curUserID)
     return checkState
+
+
+@webApp.route("/changeName",methods=('post',))
+def changeName():
+    global curUserID
+    if curUserID == "":
+        return False
+    userName = request.form["userName"]
+    checkState = userTab.changeName(userName, curUserID)
+
+    if checkState == True: 
+        global curGroupName
+        curGroupName = userName
+        print(userName)
+    return checkState
+
 
 def groupSelectText(allGroup,curGroup): #生成群聊选择器
     l=len(allGroup)
@@ -149,18 +167,6 @@ def searchMsg():
     data = data + "</div>"
     return render_template("SearchMsg.html", userName=curUserName, searchData=data)
 
-
-@webApp.route("/changeName",methods=('post',))
-def changeName():
-    global curUserID
-    if curUserID == "":
-        return False
-    userName = request.form["userName"]
-    checkState = userTab.changeName(userName, curUserID)
-
-    if checkState == True: 
-        print(userName)
-    return checkState
 
 @webApp.route("/applyFriends",methods=('post',))
 def applyFriends():
