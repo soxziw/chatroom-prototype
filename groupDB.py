@@ -1,7 +1,7 @@
 import pymysql
 
 groupID = 0
-dbConnGroup = pymysql.connect("chatGroup.db", check_same_thread=False)
+dbConnGroup = pymysql.connect("chat.db", check_same_thread=False)
 groupCursor =  dbConnGroup.cursor()
 
 # 初始化群聊表
@@ -11,8 +11,8 @@ def init():
     print(sql)
     groupCursor.execute(sql)
     sql = '''create table GROUP(
-                groupID INTEGER not null primary key,
-                groupName TEXT not null)'''
+                groupID int not null primary key,
+                groupName varchar(255) not null)'''
     print(sql)
     groupCursor.execute(sql)
     dbConnGroup.commit()
@@ -28,7 +28,7 @@ def build(groupName):
             print('创建群成功')
             groupID = groupID + 1
             dbConnGroup.commit()  
-            return groupID           
+            return groupID - 1         
     except:
         print('创建群失败')
         dbConnGroup.rollback()   
@@ -48,3 +48,13 @@ def changeName(groupID, newName, optUID):
         print('更改群名失败')
         dbConnGroup.rollback()   
         return False
+
+# 获得群名
+# return string
+def getName(groupID):
+    sql = f"select groupName from GROUP where groupID = {groupID}"
+    print(sql)
+    groupCursor.execute(sql):
+    result = messageCursor.fetchall()
+    assert (len(result) == 1)
+    return result[0][1]
