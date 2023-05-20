@@ -48,7 +48,7 @@ def write(groupID, msg, optUID):
 def getGMsg(groupID, optUID):
     sql = f"select * from MESSAGE where groupID = {groupID}"
     print(sql)
-    messageCursor.execute(sql):
+    messageCursor.execute(sql)
     result = messageCursor.fetchall()
     return tuple2dict(result)
 
@@ -57,18 +57,16 @@ def getGMsg(groupID, optUID):
 def getGUMsg(groupID, userID, optUID):
     sql = f"select * from MESSAGE where groupID = {groupID} and userID = {userID}"
     print(sql)
-    messageCursor.execute(sql):
+    messageCursor.execute(sql)
     result = messageCursor.fetchall()
     return tuple2dict(result)
 
 # 获取optUID的所有群聊中包含某子句的所有消息
 # return dict
 def getMsg(subMsg, optUID):
-    sql = f"select * from MESSAGE where msg like '%{submsg}%' and exists 
-               (select * from GROUP_USER where GROUP_USER.groupID = MESSAGE.groupID
-                and GROUP_USER.userID = '{optUID}')"
+    sql = f"select * from MESSAGE where msg like '%{subMsg}%' and exists (select * from GROUP_USER where GROUP_USER.groupID = MESSAGE.groupID and GROUP_USER.userID = '{optUID}')"
     print(sql)
-    messageCursor.execute(sql):
+    messageCursor.execute(sql)
     result = messageCursor.fetchall()
     return tuple2dict(result)
     
