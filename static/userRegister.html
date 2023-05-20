@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>用户注册</title>
+            <script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
+        </head>
+    <body>
+        账    号：<input type="text" id="userID" name="userID"><span id="checkID">请输入手机号</span><br>
+        昵    称：<input type="text" id="userName" name="userName"><span id="checkName">请输入昵称</span><br>
+        密　  码：<input type="text" id="userPassword" name="userPassword"><br>
+        确认密码：<input type="text" id="checkPassword" name="checkPassword"><span id="checkPWD">请确认密码</span><br>
+        <button id="btnOK">确定</button> <a href="../static/Login.html">返回登录</a>
+        <script type="text/javascript">
+            $("#newUserName").keyup(function(e){
+                var inputData=$(this).val();
+                //从input等输入组件取得数据，用val()，其他元素用html()
+                //if (inputData.length==0)return false;
+                if (e.keyCode == 13) {
+                    $("#userPassword").focus();//获得焦点
+                    //从后台取用户是否已经被注册
+                    $.post("/getUserState",{userName:inputData},function(rtnData){
+                        if(rtnData=='0')
+                            $("#checkState").html("(恭喜你!可以注册!)").show();
+                        else
+                            $("#checkState").html("(抱歉!该用户名已注册!)").show();
+                    });
+                }
+            });
+            $("#userID").keyup(function(e){
+                if  (e.keyCode == 13) {
+                    var num=['0','1','2','3','4','5','6','7','8','9']
+                    // 从input等输入组件取得数据，用val()，其他元素用html()
+                    // if (inputData.length==0)return false;
+                    var inputData=$(this).val();
+                    if (inputData.length != 11) {
+                        $("#checkID")[0].style.color = 'red';
+                        return;
+                    }
+                    for (var i = 0; i < 11; i = i + 1) {
+                        if (num.indexOf(inputData[i]) == -1) {
+                            $("#checkID")[0].style.color = 'red';
+                            return;
+                        }
+                    }
+                    $("#checkID")[0].style.color = 'green';
+                    $("#userName").focus();//获得焦点
+                }
+            });
+            $("#userName").keyup(function(e){
+                if (e.keyCode == 13) {
+                    var key = ['0','1','2','3','4','5','6','7','8','9',
+                                'a','b','c','d','e','f','g','h','i','j',
+                                'k','l','m','n','o','p','q','r','s','t',
+                                'u','v','w','x','y','z','A','B','C','D',
+                                'E','F','G','H','I','J','K','L','M','N',
+                                'O','P','Q','R','S','T','U','V','W','X',
+                                'Y','Z','_']
+                    // 从input等输入组件取得数据，用val()，其他元素用html()
+                    // if (inputData.length==0)return false;
+                    var inputData=$(this).val();
+                    if (inputData.length > 10) {
+                        $("#checkName")[0].style.color = 'red';
+                        return;
+                    }
+                    
+                    for (var i = 0; i < inputData.length; i = i + 1) {
+                        if (key.indexOf(inputData[i]) == -1) {
+                            $("#checkName")[0].style.color = 'red';
+                            return;
+                        }
+                    }
+                    $("#checkName")[0].style.color = 'green';
+                    $("#userPassword").focus();//获得焦点
+                }
+            });
+            $("#userPassword").keyup(function(e){
+                if(e.keyCode==13)$("#checkPassword").focus();
+            });
+            $("#checkPassword").keyup(function(e){
+                if(e.keyCode==13) {
+                    var userPassword=$("#userPassword").val();
+                    var checkPassword=$("#checkPassword").val();
+                    if (userPassword != checkPassword) {
+                        $("#checkPWD")[0].style.color = 'red';
+                        return;
+                    }
+                    $("#btnOK").click();
+                }
+            });
+            $("#btnOK").click(function(){
+                var userID = $("#userID").val();
+                var userName = $("#userName").val();
+                var userPassword = $("#userPassword").val();
+                var checkPassword = $("#checkPassword").val();
+                if (userPassword != checkPassword) {
+                    $("#checkPWD")[0].style.color = 'red';
+                    alert("请重新检查密码！");
+                }
+                else{
+                    $.post("/register",{userID:userID, userName:userName, userPassword:userPassword},function(rtn){
+                        if (rtn) {
+                            alert("注册成功！");
+                            location.replace("/");
+                        } else {
+                            alert("用户名已存在！");
+                        }
+                    });
+                }
+            });
+        </script>
+    </body>
+</html>

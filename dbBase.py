@@ -1,4 +1,3 @@
-from sre_constants import SUCCESS
 import pymysql
 
 
@@ -41,3 +40,4 @@ cursorGROUP = dbConn.cursor()
 cursorMESSAGE = dbConn.cursor()
 cursorFRIENDS = dbConn.cursor()
 cursorUG = dbConn.cursor()
+print(f"[{__name__}] Database init successed")

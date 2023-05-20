@@ -1,29 +1,42 @@
 <!doctype html>
 <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <title>聊天室：{{userName|safe}}</title>
-  <meta http-equiv="refresh" content="10">
-    <script type="text/javascript"src="../static/js/jquery-3.6.0.min.js"></script>
-    <style>
-        .message{
-            width: 300px;
-            height: 60px;
-        }
-    </style>
- </head>
- <body>
-	群名：<select id="groupList" name="groupList">{{group|safe}}</select>
-	<button id="createGroup">建组</button>
-    {{chatData|safe}}
-    <script type="text/javascript">
-        $("#groupList").change(function(){
-            var groupName=$("#groupList").val();
-            $.post("/loadChatData",{groupName:groupName});
-        });
-		$("#createGroup").click(function(){
-            location.replace("/createGroup");
-		});
-    </script>
- </body>
+    <head>
+        <meta charset="UTF-8">
+        <title>聊天室：{{userName|safe}}</title>
+        <meta http-equiv="refresh" content="10">
+        <script type="text/javascript"src="../static/js/jquery-3.6.0.min.js"></script>
+        <style>
+            .message{
+                width: 300px;
+                height: 60px;
+            }
+        </style>
+    </head>
+    <body>
+        昵称：<input type="text" id="userName" name="userName" value={{userName|safe}}>
+        <button id="changeName">修改昵称</button><br>
+        群名：<select id="groupList" name="groupList">{{group|safe}}</select>
+        <button id="createGroup">建组</button>
+        {{chatData|safe}}
+        <script type="text/javascript">
+            $("#groupList").change(function(){
+                var groupName=$("#groupList").val();
+                $.post("/loadChatData",{groupName:groupName});
+            });
+            $("#changeName").click(function(){
+                var userName = $("#userName").val();
+                $.post("/changeName",{userID:userID},function(rtn){
+                    if (rtn) {
+                        alert("修改昵称成功！");
+                        location.reload();
+                    } else {
+                        alert("修改昵称失败！");
+                    }
+                });
+            });
+            $("#createGroup").click(function(){
+                location.replace("/createGroup");
+            });
+        </script>
+    </body>
 </html>
