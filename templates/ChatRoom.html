@@ -17,12 +17,18 @@
         <button id="changeName">修改昵称</button><br>
         群名：<select id="groupList" name="groupList">{{group|safe}}</select>
         <button id="createGroup">建组</button>
+        <button id="createGroup">踢人</button>
+        <form method="post" action="/searchMsg">
+            <p><input type="text" id="search" name="search" value="请输入" maxlength="150" class="message"/></p>
+            <p><input type="submit" value="搜索消息"/></p>
+        </form>	
         {{chatData|safe}}
         <script type="text/javascript">
             $("#groupList").change(function(){
-                var groupName=$("#groupList").val();
-                $.post("/loadChatData",{groupName:groupName});
-            });
+                  var groupName=$("#groupList").val();
+                  var groupID = document.getElementById("groupList").selectedIndex;
+                  $.post("/loadChatData",{groupID:groupID, groupName:groupName});
+              });
             $("#changeName").click(function(){
                 var userName = $("#userName").val();
                 $.post("/changeName",{userID:userID},function(rtn){
@@ -36,6 +42,8 @@
             });
             $("#createGroup").click(function(){
                 location.replace("/createGroup");
+            $("#deleteGroup").click(function(){
+                location.replace("/deleteGroup");
             });
         </script>
     </body>
