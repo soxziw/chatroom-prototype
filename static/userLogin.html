@@ -48,7 +48,7 @@
                 }
                 else{
                     $.post("/login",{userID:userID,userPassword:userPassword},function(rtn){
-                        if (rtn) {
+                        if (rtn[0]) {
                             alert("登录成功！");
                             location.replace("/chatRoom");
                         } else {

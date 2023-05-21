@@ -21,7 +21,7 @@
             $("#apply").click(function(){
                 var userID = $("#friendUID").val();
                 $.post("/applyFriends",{userID:userID},function(rtn){
-                    if (rtn) {
+                    if (rtn[0]) {
                         alert("申请成功！");
                         location.reload();
                     } else {

@@ -1,30 +1,16 @@
 import pymysql
+import dbBase
 
 groupID = 0
-dbConnGroup = pymysql.connect("chat.db", check_same_thread=False)
-groupCursor =  dbConnGroup.cursor()
-
-# 初始化群聊表
-# no return
-def init(): 
-    sql = "drop table if exists GROUP"
-    print(sql)
-    groupCursor.execute(sql)
-    sql = '''create table GROUP(
-                groupID int not null primary key,
-                groupName varchar(255) not null)'''
-    print(sql)
-    groupCursor.execute(sql)
-    dbConnGroup.commit()
 
 # 创建群
 # return int
 def build(groupName):
     global groupID
-    sql = f"insert into GROUP (groupID, groupName) values({groupID}, '{groupName}')"
+    sql = f"insert into CHATGROUP (groupID, groupName) values({groupID}, '{groupName}')"
     print(sql)
     try:
-        if groupCursor.execute(sql):
+        if dbBase.cursorGROUP.execute(sql):
             print('创建群成功')
             groupID = groupID + 1
             dbConnGroup.commit()  
@@ -37,10 +23,10 @@ def build(groupName):
 # 更改群名
 # return bool
 def changeName(groupID, newName, optUID):
-    sql = f"update GROUP set groupName = '{newName}' where groupID = {groupID}"
+    sql = f"update CHATGROUP set groupName = '{newName}' where groupID = {groupID}"
     print(sql)
     try:
-        if groupCursor.execute(sql):
+        if dbBase.cursorGROUP.execute(sql):
             print('更改群名成功')
             dbConnGroup.commit()  
             return True          
@@ -52,9 +38,9 @@ def changeName(groupID, newName, optUID):
 # 获得群名
 # return string
 def getName(groupID):
-    sql = f"select groupName from GROUP where groupID = {groupID}"
+    sql = f"select groupName from CHATGROUP where groupID = {groupID}"
     print(sql)
-    groupCursor.execute(sql):
+    dbBase.cursorGROUP.execute(sql)
     result = messageCursor.fetchall()
     assert (len(result) == 1)
     return result[0][1]

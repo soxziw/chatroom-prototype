@@ -1,9 +1,8 @@
 import pymysql
+import dbBase
 
 messageID = 0
 colName = ['msgID', 'groupID', 'userID', 'msg']
-dbConnMessage = pymysql.connect("chat.db", check_same_thread=False)
-messageCursor =  dbConnMessage.cursor()
 
 def tuple2dict(tmp):
     result = {}
@@ -16,14 +15,14 @@ def tuple2dict(tmp):
 def init(): 
     sql = "drop table if exists MESSAGE"
     print(sql)
-    messageCursor.execute(sql)
+    dbBase.cursorMESSAGE.execute(sql)
     sql = '''create table MESSAGE(
                 msgID int not null primary key,
                 groupID int not null,
                 userID varchar(255) not null,
                 msg varchar(255) not null)'''
     print(sql)
-    messageCursor.execute(sql)
+    dbBase.cursorMESSAGE.execute(sql)
     dbConnMessage.commit()
 
 # 写消息
@@ -33,7 +32,7 @@ def write(groupID, msg, optUID):
     sql = f"insert into MESSAGE (msgID, groupID, userID, msg) values({messgaeID}, {groupID}, '{optID}', '{msg}')"
     print(sql)
     try:
-        if messageCursor.execute(sql):
+        if dbBase.cursorMESSAGE.execute(sql):
             print(f'写消息成功')
             messageID = messageID + 1
             dbConnMessage.commit()  
@@ -48,8 +47,8 @@ def write(groupID, msg, optUID):
 def getGMsg(groupID, optUID):
     sql = f"select * from MESSAGE where groupID = {groupID}"
     print(sql)
-    messageCursor.execute(sql)
-    result = messageCursor.fetchall()
+    dbBase.cursorMESSAGE.execute(sql)
+    result = dbBase.cursorMESSAGE.fetchall()
     return tuple2dict(result)
 
 # 获取groupID群聊中userID的所有消息
@@ -57,8 +56,8 @@ def getGMsg(groupID, optUID):
 def getGUMsg(groupID, userID, optUID):
     sql = f"select * from MESSAGE where groupID = {groupID} and userID = {userID}"
     print(sql)
-    messageCursor.execute(sql)
-    result = messageCursor.fetchall()
+    dbBase.cursorMESSAGE.execute(sql)
+    result = dbBase.cursorMESSAGE.fetchall()
     return tuple2dict(result)
 
 # 获取optUID的所有群聊中包含某子句的所有消息
@@ -66,7 +65,7 @@ def getGUMsg(groupID, userID, optUID):
 def getMsg(subMsg, optUID):
     sql = f"select * from MESSAGE where msg like '%{subMsg}%' and exists (select * from GROUP_USER where GROUP_USER.groupID = MESSAGE.groupID and GROUP_USER.userID = '{optUID}')"
     print(sql)
-    messageCursor.execute(sql)
-    result = messageCursor.fetchall()
+    dbBase.cursorMESSAGE.execute(sql)
+    result = dbBase.cursorMESSAGE.fetchall()
     return tuple2dict(result)
     

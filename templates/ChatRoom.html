@@ -32,7 +32,7 @@
             $("#changeName").click(function(){
                 var userName = $("#userName").val();
                 $.post("/changeName",{userID:userID},function(rtn){
-                    if (rtn) {
+                    if (rtn[0]) {
                         alert("修改昵称成功！");
                         location.reload();
                     } else {

@@ -20,7 +20,7 @@ def login(userID, password):
     status = dbBase.cursorUSER.execute(sql, {'userID': userID,})
     if status != dbBase.SELECT.ONE:
         return False
-    if password != dbBase.cursorUSER.fetchone()[2]:
+    if password != dbBase.cursorUSER.fetchone()[0]:
         return False
     return True
 
