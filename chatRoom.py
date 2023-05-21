@@ -27,9 +27,9 @@ def login():
         global curUserID
         global curUserName
         curUserID = userID
-        curUserName = userTab.getUser(userID).name
+        curUserName = userTab.getUser(userID)['name']
         print(curUserID)
-    return checkState
+    return [checkState]
 
 @webApp.route("/register",methods=('post',))
 def register():
@@ -40,7 +40,7 @@ def register():
 
     if checkState == True: 
         print(curUserID)
-    return checkState
+    return [checkState]
 
 
 @webApp.route("/changeName",methods=('post',))
@@ -52,21 +52,22 @@ def changeName():
     checkState = userTab.changeName(userName, curUserID)
 
     if checkState == True: 
-        global curGroupName
-        curGroupName = userName
+        global curUserName
+        curUserName = userName
         print(userName)
-    return checkState
+    return [checkState]
 
 
-def groupSelectText(allGroup,curGroup): #生成群聊选择器
-    l=len(allGroup)
-    text=""
-    for num in range(0,l):
-        text=text+"<option value=\""+allGroup[num][0]+"\" "
-        if allGroup[num][0]==curGroup:
-            text=text+"selected"
-        text=text+">"+allGroup[num][0]+"</option>"
-    return text
+# 生成群聊选择器
+def groupSelectText(group_id_list, curGroupID):
+	text = ""
+	for group_id in group_id_list:
+		group_name = groupDB.getName(group_id)
+		text = text + "<option value=\"" + group_name + "\" "
+		if group_id == curGroupID:
+			text = text + "selected"
+		text = text + ">" + group_name + "</option>"
+	return text
 
 # 聊天室
 @webApp.route("/chatRoom")
@@ -168,7 +169,7 @@ def searchMsg():
     return render_template("SearchMsg.html", userName=curUserName, searchData=data)
 
 
-@webApp.route("/applyFriends",methods=('post',))
+@webApp.route("/applyFriends", methods=('post',))
 def applyFriends():
     global curUserID
     if curUserID == "":
@@ -178,9 +179,9 @@ def applyFriends():
 
     if checkState == True: 
         print(userID)
-    return checkState
+    return [checkState]
 
-@webApp.route("/agreeFriends",methods=('post',))
+@webApp.route("/agreeFriends", methods=('post',))
 def agreeFriends():
     userID = request.form["userID"]
     global curUserID
@@ -190,7 +191,7 @@ def agreeFriends():
 
     if checkState == True: 
         print(userID)
-    return checkState
+    return [checkState]
 
 @webApp.route("/friends")
 def friends():
@@ -205,7 +206,7 @@ def friends():
                                     $("#agree_""" + friend.friendID + """").click(function(){
                                         var userID = $("#app_""" + friend.friendID + """").val();
                                         $.post("/agreeFriends",{userID:userID},function(rtn){
-                                            if (rtn) {
+                                            if (rtn[0]) {
                                                 alert("添加好友成功！");
                                                 location.reload();
                                             } else {
@@ -216,8 +217,8 @@ def friends():
                                 </script>"""
     appData = appData + "</div>"
     userName = userTab.getUser(curUserID).userName
-    return render_template("Friends.html",userName=userName,appData=appData)
+    return render_template("Friends.html", userName=userName, appData=appData)
 
 if __name__=="__main__": #新增代码
-    webApp.run(host="0.0.0.0",port=80,debug=True)
+    webApp.run(host="0.0.0.0", port=80, debug=True)
 

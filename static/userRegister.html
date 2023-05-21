@@ -99,7 +99,7 @@
                 }
                 else{
                     $.post("/register",{userID:userID, userName:userName, userPassword:userPassword},function(rtn){
-                        if (rtn) {
+                        if (rtn[0]) {
                             alert("注册成功！");
                             location.replace("/");
                         } else {
