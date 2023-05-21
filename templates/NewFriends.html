@@ -14,10 +14,13 @@
     </head>
     <body>
         申请好友：<input type="text" id="friendUID" name="friendUID" value="请输入好友ID">
-        <button id="apply">申请</button><br>
-        新的朋友：<div id="appList" name="appList">{{appData|safe}}</div>
-        <button id="agreeFriends">同意</button>
+        <button id="apply">申请</button><button id="returnChat">返回聊天</button><br>
+        新的朋友：<div id="appList" name="appList"></div><br>
+        {{appData|safe}}
         <script type="text/javascript">
+            $("#friendUID").keyup(function(e){
+                if(e.keyCode==13)$("#apply").click();
+            });
             $("#apply").click(function(){
                 var userID = $("#friendUID").val();
                 $.post("/applyFriends",{userID:userID},function(rtn){
@@ -28,6 +31,9 @@
                         alert("申请失败，请检查好友ID是否正确！");
                     }
                 });
+            });
+            $("#returnChat").click(function(){
+                location.replace("/chatRoom");
             });
         </script>
     </body>

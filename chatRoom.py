@@ -29,7 +29,7 @@ def login():
         curUserID = userID
         curUserName = userTab.getUser(userID)['name']
         print(curUserID)
-    return [checkState]
+    return [checkState,]
 
 @webApp.route("/register",methods=('post',))
 def register():
@@ -40,14 +40,14 @@ def register():
 
     if checkState == True: 
         print(curUserID)
-    return [checkState]
+    return [checkState,]
 
 
 @webApp.route("/changeName",methods=('post',))
 def changeName():
     global curUserID
     if curUserID == "":
-        return False
+        return [False,]
     userName = request.form["userName"]
     checkState = userTab.changeName(userName, curUserID)
 
@@ -55,7 +55,7 @@ def changeName():
         global curUserName
         curUserName = userName
         print(userName)
-    return [checkState]
+    return [checkState,]
 
 
 # 生成群聊选择器
@@ -75,6 +75,7 @@ def chatRoom():
     global curUserName, curUserID, curGroupName, curGroupID
     print(curUserName, curGroupName)
     group_id_list = ugTab.getGID(curUserID)
+    data = "<div class=\"chatData\"></div>"
     if curGroupName != "":
         msg_dict = messageDB.getGMsg(curGroupID)
         l = len(msg_dict['msg'])
@@ -173,40 +174,42 @@ def searchMsg():
 def applyFriends():
     global curUserID
     if curUserID == "":
-        return False
+        return [False,]
     userID = request.form["userID"]
     checkState = friendsTab.apply(userID, curUserID)
 
     if checkState == True: 
         print(userID)
-    return [checkState]
+    return [checkState,]
 
 @webApp.route("/agreeFriends", methods=('post',))
 def agreeFriends():
     userID = request.form["userID"]
     global curUserID
     if curUserID == "" or curUserID == userID:
-        return False
+        return [False,]
     checkState = friendsTab.agree(userID, curUserID)
 
     if checkState == True: 
         print(userID)
-    return [checkState]
+    return [checkState,]
 
-@webApp.route("/friends")
-def friends():
+@webApp.route("/newFriends")
+def newFriends():
     global curUserID
     print(curUserID)
     allFriends = friendsTab.getFriends(curUserID)
     appData = f"<div class='chatData'>"
     for friend in allFriends:
-        if friend.status == "UNSET":
-            appData = appData + f"<div type='text' id='app_{friend.friendID}'>{friend.friendID}</div><button id='agree_{friend.friendID}'>同意</button><br>"
+        if friend['status'] == "UNSET":
+            FID = friend['friendID']
+            appData = appData + f"<div type='text' id='app_{FID}'>{FID}</div><button id='agree_{FID}'>同意</button><br>"
             appData = appData +"""<script type="text/javascript">
-                                    $("#agree_""" + friend.friendID + """").click(function(){
-                                        var userID = $("#app_""" + friend.friendID + """").val();
-                                        $.post("/agreeFriends",{userID:userID},function(rtn){
-                                            if (rtn[0]) {
+                                    $("#agree_""" + FID + """").click(function(){
+                                        var userID = $("#app_""" + FID + """").text();
+                                        alert(userID);
+                                        $.post("/agreeFriends",{userID:userID},function(rtn,){
+                                            if (rtn=="true") {
                                                 alert("添加好友成功！");
                                                 location.reload();
                                             } else {
@@ -216,8 +219,8 @@ def friends():
                                     });
                                 </script>"""
     appData = appData + "</div>"
-    userName = userTab.getUser(curUserID).userName
-    return render_template("Friends.html", userName=userName, appData=appData)
+    userName = userTab.getUser(curUserID)['name']
+    return render_template("NewFriends.html", userName = userName, appData = appData)
 
 if __name__=="__main__": #新增代码
     webApp.run(host="0.0.0.0", port=80, debug=True)
