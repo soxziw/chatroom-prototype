@@ -10,7 +10,7 @@
         昵    称：<input type="text" id="userName" name="userName"><span id="checkName">请输入昵称</span><br>
         密　  码：<input type="text" id="userPassword" name="userPassword"><br>
         确认密码：<input type="text" id="checkPassword" name="checkPassword"><span id="checkPWD">请确认密码</span><br>
-        <button id="btnOK">确定</button> <a href="../static/Login.html">返回登录</a>
+        <button id="btnOK">确定</button> <a href="../static/userLogin.html">返回登录</a>
         <script type="text/javascript">
             $("#newUserName").keyup(function(e){
                 var inputData=$(this).val();
@@ -98,8 +98,8 @@
                     alert("请重新检查密码！");
                 }
                 else{
-                    $.post("/register",{userID:userID, userName:userName, userPassword:userPassword},function(rtn){
-                        if (rtn[0]) {
+                    $.post("/register",{userID:userID, userName:userName, userPassword:userPassword},function(rtn,){
+                        if (rtn=="true") {
                             alert("注册成功！");
                             location.replace("/");
                         } else {

@@ -14,7 +14,7 @@
     </head>
     <body>
         昵称：<input type="text" id="userName" name="userName" value={{userName|safe}}>
-        <button id="changeName">修改昵称</button><br>
+        <button id="changeName">修改昵称</button><button id="newFiends">新的好友</button><br>
         群名：<select id="groupList" name="groupList">{{group|safe}}</select>
         <button id="createGroup">建组</button>
         <button id="createGroup">踢人</button>
@@ -25,14 +25,41 @@
         {{chatData|safe}}
         <script type="text/javascript">
             $("#groupList").change(function(){
-                  var groupName=$("#groupList").val();
-                  var groupID = document.getElementById("groupList").selectedIndex;
-                  $.post("/loadChatData",{groupID:groupID, groupName:groupName});
-              });
+                var groupName=$("#groupList").val();
+                var groupID = document.getElementById("groupList").selectedIndex;
+                $.post("/loadChatData",{groupID:groupID, groupName:groupName});
+            });
+            $("#userName").keyup(function(e){
+                if (e.keyCode==13) {
+                    var key = ['0','1','2','3','4','5','6','7','8','9',
+                                'a','b','c','d','e','f','g','h','i','j',
+                                'k','l','m','n','o','p','q','r','s','t',
+                                'u','v','w','x','y','z','A','B','C','D',
+                                'E','F','G','H','I','J','K','L','M','N',
+                                'O','P','Q','R','S','T','U','V','W','X',
+                                'Y','Z','_']
+                    // 从input等输入组件取得数据，用val()，其他元素用html()
+                    // if (inputData.length==0)return false;
+                    var inputData=$(this).val();
+                    if (inputData.length > 10) {
+                        $("#changeName")[0].style.color = 'red';
+                        return;
+                    }
+                    
+                    for (var i = 0; i < inputData.length; i = i + 1) {
+                        if (key.indexOf(inputData[i]) == -1) {
+                            $("#changeName")[0].style.color = 'red';
+                            return;
+                        }
+                    }
+                    $("#changeName")[0].style.color = 'green';
+                    $("#changeName").click();
+                }
+            });
             $("#changeName").click(function(){
                 var userName = $("#userName").val();
-                $.post("/changeName",{userID:userID},function(rtn){
-                    if (rtn[0]) {
+                $.post("/changeName",{userName:userName},function(rtn,){
+                    if (rtn=="true") {
                         alert("修改昵称成功！");
                         location.reload();
                     } else {
@@ -40,8 +67,12 @@
                     }
                 });
             });
+            $("#newFiends").click(function(){
+                location.replace("/newFriends");
+            });
             $("#createGroup").click(function(){
                 location.replace("/createGroup");
+            });
             $("#deleteGroup").click(function(){
                 location.replace("/deleteGroup");
             });
