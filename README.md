@@ -37,10 +37,10 @@ database midterm course project
    2. changeName(groupID, optUID) : bool
 4. 消息表：msgID(msg_timestamp) groupID userID msg
    1. writeMsg(groupID, msg, optUID) : bool
-   2. getGMsg(groupID, optUID) : dict[]
-   3. getGUMsg(groupID, userID, optUID) : dict[]
-   4. getMsg(subMsg, optUID) : dict[]
+   2. getGMsg(groupID, optUID) : list[dict[]]
+   3. getGUMsg(groupID, userID, optUID) : list[dict[]]
+   4. getMsg(subMsg, optUID) : list[dict[]]
 5. 好友表：userID friendID status
    1. apply(userID, optUID) : bool
    2. agree(userID, optUID) : bool
-   3. getFriends(optUID) : dict[]
+   3. getFriends(optUID) : list[dict[]]
