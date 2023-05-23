@@ -3,39 +3,150 @@
     <head>
         <meta charset="UTF-8">
         <title>聊天室：{{userName|safe}}</title>
-        <meta http-equiv="refresh" content="10">
-        <script type="text/javascript"src="../static/js/jquery-3.6.0.min.js"></script>
+        <meta http-equiv="refresh" content="3">
+        <script type="text/javascript" src="../static/js/jquery-3.6.0.min.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
-            .message{
-                width: 300px;
-                height: 60px;
+            * {
+                box-sizing: border-box;
+            }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+            }
+            .button-group {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 10px;
+                background-color: #fff;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+            }
+            .button-group div {
+                display: flex;
+                align-items: center;
+            }
+            .button-group label {
+                margin-right: 10px;
+            }
+            .form-group {
+                margin-bottom: 10px;
+                background-color: #fff;
+                padding: 10px;
+                border-bottom: 1px solid #ccc;
+            }
+            .input-group {
+                display: flex;
+                align-items: center;
+            }
+            .input-group label {
+                margin-right: 10px;
+            }
+            .message-list {
+                min-height: 300px;
+                border: 1px solid #ccc;
+                padding: 10px;
+                overflow-y: scroll;
+                background-color: #fff;
+            }
+            .message {
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin-bottom: 5px;
+            }
+            .message-btn {
+                background-color: #3498db;
+                color: #fff;
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-left: 10px;
+            }
+            .message-btn:hover {
+                background-color: #2980b9;
+            }
+            .message-btn:focus {
+                outline: none;
+            }
+            .message-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+            .message-btn:disabled:hover {
+                background-color: #3498db;
+            }
+            .chat-title {
+                font-size: 24px;
+                font-weight: bold;
+                padding: 10px;
+                background-color: #3498db;
+                color: #fff;
+                margin: 0;
+            }
+            .chat-title i {
+                margin-right: 10px;
+            }
+            .chat-info {
+                padding: 10px;
+                background-color: #f2f2f2;
+                border-bottom: 1px solid #ccc;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-size: 14px;
+            }
+            .chat-info i {
+                margin-right: 5px;
+            }
+            .chat-info span {
+                margin-right: 10px;
             }
         </style>
     </head>
     <body>
-        昵称：<input type="text" id="userName" name="userName" value={{userName|safe}}>
-        <button id="changeName">修改昵称</button><button id="newFiends">新的好友</button><br>
-        群名：<select id="groupList" name="groupList">{{group|safe}}</select>
-        <button id="createGroup">建组</button>
-        <button id="createGroup">踢人</button>
-        <form method="post" action="/searchMsg">
-            <p><input type="text" id="search" name="search" value="请输入" maxlength="150" class="message"/></p>
-            <p><input type="submit" value="搜索消息"/></p>
-        </form>	
-        {{chatData|safe}}
+        <div class="button-group">
+            <div>
+                <label for="userName">昵称：</label>
+                <input type="text" id="userName" name="userName" value="{{userName|safe}}">
+                <button id="changeName"><i class="fas fa-edit"></i>修改昵称</button>
+                <button id="newFiends"><i class="fas fa-user-plus"></i>新的好友</button>
+            </div>
+            <div>
+                <label for="groupList">群名：</label>
+                <select id="groupList" name="groupList">{{group|safe}}</select>
+                <button id="createGroup"><i class="fas fa-plus"></i>建组</button>
+            </div>
+        </div>
+        <h1 class="chat-title"><i class="fas fa-comments"></i>聊天室</h1>
+        <div class="form-group">
+            <form method="post" action="/searchMsg">
+                <div class="input-group">
+                    <input type="text" id="search" name="search" value="请输入" maxlength="150" class="message"/>
+                    <button type="submit" class="message-btn"><i class="fas fa-search"></i>搜索消息</button>
+                </div>
+            </form>
+        </div>
+        <div class="message-list">
+            {{chatData|safe}}
+        </div>
+            {{otherData|safe}}
         <script type="text/javascript">
-            $("#groupList").change(function(){
+            $("#groupList").click(function(){
                 var groupName=$("#groupList").val();
-                var groupID = document.getElementById("groupList").selectedIndex;
-                $.post("/loadChatData",{groupID:groupID, groupName:groupName});
+                var groupID=$("#groupList option:selected").attr('cnt');
+                $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName});
             });
             $("#userName").keyup(function(e){
                 if (e.keyCode==13) {
                     var key = ['0','1','2','3','4','5','6','7','8','9',
                                 'a','b','c','d','e','f','g','h','i','j',
-                                'k','l','m','n','o','p','q','r','s','t',
+                                'k','m','n','o','p','q','r','s','t',
                                 'u','v','w','x','y','z','A','B','C','D',
-                                'E','F','G','H','I','J','K','L','M','N',
+                                'E','F','G','H','J','K','L','M','N',
                                 'O','P','Q','R','S','T','U','V','W','X',
                                 'Y','Z','_']
                     // 从input等输入组件取得数据，用val()，其他元素用html()
@@ -76,6 +187,11 @@
             $("#deleteGroup").click(function(){
                 location.replace("/deleteGroup");
             });
+            $("#addGroup").click(function(){
+                location.replace("/addGroup");
+            });
         </script>
     </body>
 </html>
+
+

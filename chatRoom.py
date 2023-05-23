@@ -1,6 +1,6 @@
 from glob import glob
 from flask import Flask, request, redirect, render_template 
-import groupDB, messageDB, userTab, ugTab, friendsTab
+import groupTab, messageTab, userTab, ugTab, friendsTab
 
 webApp = Flask(__name__) #新增代码
 
@@ -15,6 +15,9 @@ curGroupID = ""
 
 @webApp.route("/") #新增代码，对应执行root()函数
 def root():
+    global curUserName, curGroupName
+    curUserName = ""
+    curGroupName = ""
     return redirect("/static/userLogin.html")
 
 @webApp.route("/login",methods=('post',))
@@ -61,9 +64,9 @@ def changeName():
 # 生成群聊选择器
 def groupSelectText(group_id_list, curGroupID):
 	text = ""
-	for group_id in group_id_list:
-		group_name = groupDB.getName(group_id)
-		text = text + "<option value=\"" + group_name + "\" "
+	for cnt, group_id in enumerate(group_id_list):
+		group_name = groupTab.getName(group_id)
+		text = text + f"<option cnt={cnt} value=\"" + group_name + "\" "
 		if group_id == curGroupID:
 			text = text + "selected"
 		text = text + ">" + group_name + "</option>"
@@ -75,19 +78,25 @@ def chatRoom():
     global curUserName, curUserID, curGroupName, curGroupID
     print(curUserName, curGroupName)
     group_id_list = ugTab.getGID(curUserID)
-    data = "<div class=\"chatData\"></div>"
+    chatData = ""
+    otherData = ""
     if curGroupName != "":
-        msg_dict = messageDB.getGMsg(curGroupID)
+        msg_dict = messageTab.getGMsg(curGroupID, curUserID)
+        print ("msg_dict:", msg_dict)
         l = len(msg_dict['msg'])
-        data = "<div class=\"chatData\">"
         for i in range(l):
             tmp_user = userTab.getUser(msg_dict['userID'][i])
+            print("tmp_user", tmp_user)
             tmp_user_name = tmp_user['name']
-            data = data + f"{tmp_user_name}: {msg_dict['msg'][i]}<br>"
-        data = data + "</div>" + """<form method="post" action="/sendAndReturn">
+            chatData = chatData + f"<i class=\"fas fa-comment\"></i> {tmp_user_name}: {msg_dict['msg'][i]}<br>"
+        otherData = otherData + """<form method="post" action="/sendAndReturn">
                         <p><input type="text" id="message" name="message" value="请输入" maxlength="150" class="message"/></p>
-                        <p><input type="submit" value="发送"/></p></form>"""          
-    return render_template("ChatRoom.html", userName=curUserName, group=groupSelectText(group_id_list, curGroupID), chatData=data)
+                        <p><button type="submit"><i class="fas fa-paper-plane"></i>发送</button></form>
+                        """
+        if ugTab.getStatus(curGroupID, curUserID) == 'high':
+            otherData = otherData + "<button id='deleteGroup'><i class=\"fas fa-user-times\"></i>踢人</button>"
+        otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
+    return render_template("ChatRoom.html", userName=curUserName, group=groupSelectText(group_id_list, curGroupID), chatData=chatData, otherData=otherData)
 
 # 加载群聊数据
 @webApp.route("/loadChatData", methods=('post',))
@@ -95,7 +104,8 @@ def loadChatData():
     global curUserID, curGroupName, curGroupID
     curGroupName = request.form["groupName"]
     group_id_list = ugTab.getGID(curUserID)
-    curGroupID = group_id_list[request.form["groupID"]]
+    # print("curGroupName:", curGroupName, "group_id_list:", group_id_list, "groupID:", request.form["groupID"])
+    curGroupID = group_id_list[int(request.form["groupID"])]
     return redirect("/chatRoom")
 
 # 跳转到创建群聊网页
@@ -119,9 +129,9 @@ def createAndReturn():
     global curUserID, curGroupID, curGroupName
     group_name = request.form["newGroupName"]
     group_users_id = request.form.getlist("user")
-    group_id = groupDB.build(group_name)
-    for user_id in group_users_id:
-        ugTab.addUser(group_id, user_id, curUserID)
+    group_id = groupTab.build(group_name)
+    ugTab.addUsers(group_id, [curUserID], curUserID, 'high')
+    ugTab.addUsers(group_id, group_users_id, curUserID, 'low')
     curGroupID = group_id
     curGroupName = group_name
     return redirect("/chatRoom")
@@ -129,20 +139,51 @@ def createAndReturn():
 # 跳转到删除群聊成员网页
 @webApp.route("/deleteGroup") 
 def deleteGroup():
-    global curUserID, curGroupID
+    global curUserID, curGroupID, curGroupName
     users_id_list = ugTab.getUID(curGroupID)
+    text = ""
     for user_id in users_id_list:
         user_name = userTab.getUser(user_id)['name']
         text = text + f"<input type=\"checkbox\" value=\"{user_id}\" name=\"user\"/>{user_name}"
-    return render_template("DeleteGroup.html", userName=curUserName, allUser=text)
+    return render_template("DeleteGroup.html", userName=curUserName, groupName=curGroupName, allUser=text)
 
 # 删除群聊成员并返回聊天室
 @webApp.route("/deleteAndReturn", methods=('post',))
 def deleteAndReturn():
     global curUserID, curGroupID, curGroupName
+    if curGroupName == "":
+        return redirect("/chatRoom")
     group_users_id = request.form.getlist("user")
     for user_id in group_users_id:
         ugTab.deleteUser(curGroupID, user_id, curUserID)
+        if user_id == curUserID:
+            curGroupName = ""
+    return redirect("/chatRoom")
+
+# 跳转到添加群聊成员网页
+@webApp.route("/addGroup") 
+def addGroup():
+    global curUserID, curGroupID, curGroupName
+    friends_dict_list = friendsTab.getFriends(curUserID)
+    friends_id_list = []
+    for friend in friends_dict_list:
+        if friend['status'] == 'SET':
+            friends_id_list.append(friend['friendID'])
+    text = ""
+    for friend_id in friends_id_list:
+        # 已经在组里了，不能重复添加
+        if ugTab.getStatus(curGroupID, friend_id) != 'none':
+            continue
+        friend_name = userTab.getUser(friend_id)['name']
+        text = text + f"<input type=\"checkbox\" value=\"{friend_id}\" name=\"user\"/>{friend_name}"
+    return render_template("AddGroup.html", userName=curUserName, groupName=curGroupName, allUser=text)
+
+# 添加群聊成员并返回聊天室
+@webApp.route("/addAndReturn", methods=('post',))
+def addAndReturn():
+    global curUserID, curGroupID, curGroupName
+    group_users_id = request.form.getlist("user")
+    ugTab.addUsers(curGroupID, group_users_id, curUserID, 'low')
     return redirect("/chatRoom")
 
 # 发送信息并返回聊天室
@@ -150,7 +191,7 @@ def deleteAndReturn():
 def sendAndReturn():
     global curGroupID, curUserID
     message = request.form["message"]
-    messageDB.writeMsg(curGroupID, message, curUserID)
+    messageTab.writeMsg(curGroupID, message, curUserID)
     return redirect("/chatRoom")
 
 # 搜索全局消息
@@ -158,14 +199,14 @@ def sendAndReturn():
 def searchMsg():
     global curGroupID, curUserID
     subMsg = request.form["search"]
-    msg_dict = messageDB.getMsg(subMsg, curUserID)
+    msg_dict = messageTab.getMsg(subMsg, curUserID)
     l = len(msg_dict['msg'])
     data = "<div class=\"searchData\">"
     for i in range(l):
         tmp_user = userTab.getUser(msg_dict['userID'][i])
         tmp_user_name = tmp_user['name']
-        tmp_group_name = groupDB.getName(msg_dict['groupID'][i])
-        data = data + f"{tmp_user_name} from {tmp_group_name}: {msg_dict['msg'][i]}<br>"
+        tmp_group_name = groupTab.getName(msg_dict['groupID'][i])
+        data = data + f"<i class=\"fas fa-comment\"></i> {tmp_user_name} from {tmp_group_name}: {msg_dict['msg'][i]}<br>"
     data = data + "</div>"
     return render_template("SearchMsg.html", userName=curUserName, searchData=data)
 

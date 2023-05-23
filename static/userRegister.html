@@ -1,16 +1,96 @@
-<!doctype html>
-<html lang="en">
+<!doctype html><html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <title>用户注册</title>
-            <script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
-        </head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <script type="text/javascript" src="./js/jquery-3.6.0.min.js"></script>
+    <style>
+    body {
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+    color: #333;
+    }
+    .container {
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        max-width: 400px;
+        text-align: center;
+    }
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    label {
+        display: inline-block;
+        margin-bottom: 10px;
+        font-weight: bold;
+    }
+    input[type="text"],
+    input[type="password"] {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 16px;
+        background-color: #f9f9f9;
+    }
+    #error {
+        color: red;
+        margin-bottom: 10px;
+    }
+    .btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        font-size: 16px;
+        transition: all 0.2s ease-in-out;
+    }
+    .btn:hover {
+        background-color: #3e8e41;
+    }
+    a {
+        color: #4CAF50;
+        text-decoration: none;
+        font-size: 14px;
+    }
+    a:hover {
+        text-decoration: underline;
+    }
+    #checkID,
+    #checkName,
+    #checkPWD {
+        color: red;
+        margin-left: 5px;
+        font-size: 12px;
+    }
+    </style>
+    </head>
     <body>
-        账    号：<input type="text" id="userID" name="userID"><span id="checkID">请输入手机号</span><br>
-        昵    称：<input type="text" id="userName" name="userName"><span id="checkName">请输入昵称</span><br>
-        密　  码：<input type="text" id="userPassword" name="userPassword"><br>
-        确认密码：<input type="text" id="checkPassword" name="checkPassword"><span id="checkPWD">请确认密码</span><br>
-        <button id="btnOK">确定</button> <a href="../static/userLogin.html">返回登录</a>
+        <div class="container">
+        <h1>用户注册</h1>
+        <label for="userID">账号:</label>
+        <span id="checkID">(请输入手机号)</span><br>
+        <input type="text" id="userID" name="userID">
+        <label for="userName">昵称:</label>
+        <span id="checkName">(请输入昵称)</span><br>
+        <input type="text" id="userName" name="userName">
+        <label for="userPassword">密码:</label>
+        <input type="password" id="userPassword" name="userPassword">
+        <label for="checkPassword">确认密码:</label>
+        <span id="checkPWD">(请确认密码)</span><br>
+        <input type="password" id="checkPassword" name="checkPassword">
+        <button id="btnOK" class="btn">注册</button>
+        <a href="../static/userLogin.html">返回登录</a>
+        </div>
+    <script type="text/javascript" src="./js/jquery-3.6.0.min.js"></script>
         <script type="text/javascript">
             $("#newUserName").keyup(function(e){
                 var inputData=$(this).val();
@@ -63,7 +143,6 @@
                         $("#checkName")[0].style.color = 'red';
                         return;
                     }
-                    
                     for (var i = 0; i < inputData.length; i = i + 1) {
                         if (key.indexOf(inputData[i]) == -1) {
                             $("#checkName")[0].style.color = 'red';
@@ -108,6 +187,35 @@
                     });
                 }
             });
+        $(document).ready(function () {
+            var btnOK = $('#btnOK');
+            var userID = $('#userID');
+            var userName = $('#userName');
+            var userPassword = $('#userPassword');
+            var checkPassword = $('#checkPassword');
+            var checkID = $('#checkID');
+            var checkName = $('#checkName');
+            var checkPWD = $('#checkPWD');
+            btnOK.click(function () {
+            if (!userID.val()) {
+                checkID.text('请输入手机号');
+                return false;
+            }
+            if (!userName.val()) {
+                checkName.text('请输入昵称');
+                return false;
+            }
+            if (!userPassword.val()) {
+                checkPWD.text('请输入密码');
+                return false;
+            }
+            if (userPassword.val() !== checkPassword.val()) {
+                checkPWD.text('两次输入的密码不一致');
+                return false;
+            }
+            });
+        });
         </script>
     </body>
 </html>
+

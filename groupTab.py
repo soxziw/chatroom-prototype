@@ -13,11 +13,11 @@ def build(groupName):
         if dbBase.cursorGROUP.execute(sql):
             print('创建群成功')
             groupID = groupID + 1
-            dbConnGroup.commit()  
+            dbBase.dbConn.commit()  
             return groupID - 1         
     except:
         print('创建群失败')
-        dbConnGroup.rollback()   
+        dbBase.dbConn.rollback()   
         return -1
 
 # 更改群名
@@ -28,11 +28,11 @@ def changeName(groupID, newName, optUID):
     try:
         if dbBase.cursorGROUP.execute(sql):
             print('更改群名成功')
-            dbConnGroup.commit()  
+            dbBase.dbConn.commit()  
             return True          
     except:
         print('更改群名失败')
-        dbConnGroup.rollback()   
+        dbBase.dbConn.rollback()   
         return False
 
 # 获得群名
@@ -41,6 +41,6 @@ def getName(groupID):
     sql = f"select groupName from CHATGROUP where groupID = {groupID}"
     print(sql)
     dbBase.cursorGROUP.execute(sql)
-    result = messageCursor.fetchall()
+    result = dbBase.cursorGROUP.fetchall()
     assert (len(result) == 1)
-    return result[0][1]
+    return result[0][0]

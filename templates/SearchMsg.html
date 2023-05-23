@@ -5,6 +5,7 @@
   <title>聊天室：{{userName|safe}}</title>
   <meta http-equiv="refresh" content="10">
     <script type="text/javascript" src="../static/js/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         .message{
             width: 300px;
@@ -14,7 +15,7 @@
  </head>
  <body>
     {{searchData|safe}}
-    <button id="goBack">返回</button>
+    <button id="goBack"><i class="fas fa-arrow-left"></i>返回</button>
     <script type="text/javascript">
 		$("#goBack").click(function(){
             location.replace("/chatRoom");

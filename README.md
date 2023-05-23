@@ -26,11 +26,12 @@ database midterm course project
    2. register(userID, name, password) : bool
    3. login(userID, password) : bool
    4. changeName(name, optUID) : bool
-2. 群-用户表：userID groupID
-   1. addUsers(groupID, userID[], optUID) : bool
-   2. deleteUser(groupID, userID, optUID) : bool
-   3. getUID(groupID) : string[]
-   4. getGID(optUID) : string[]
+2. 群-用户表：userID groupID status
+   1. addUsers(groupID, userID[], optUID, status) : bool
+   2. getStatus(groupID, optUID) : string
+   3. deleteUser(groupID, userID, optUID) : bool
+   4. getUID(groupID) : string[]
+   5. getGID(optUID) : string[]
 3. 群表：groupID(groupName_timestamp) groupName
    1. build(groupName) : string(groupID)
    2. changeName(groupID, optUID) : bool
