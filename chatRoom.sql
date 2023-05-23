@@ -54,6 +54,7 @@ create table UG
 (
    userID               char(20) not null,
    groupID              int not null,
+   status               char(7) not null,
    primary key (userID, groupID)
 );
 

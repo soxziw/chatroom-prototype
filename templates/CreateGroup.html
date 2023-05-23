@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>创建群聊：{{userName|safe}}</title>
 	<script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
  </head>
  <body>
     <form method="post" action="/createAndReturn">
@@ -11,6 +12,7 @@
         <p>邀请:
         {{allUser|safe}}
         </p>
-	    <p><input type="submit" value="提交"/></p>
+      <p><button type="submit"><i class="fas fa-paper-plane"></i>提交</button></form>
+  </script>
  </body>
 </html>

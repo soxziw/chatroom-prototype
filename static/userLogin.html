@@ -1,15 +1,89 @@
-<!doctype html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>用户登录</title>
-        <script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
-    </head>
-    <body>
-        账    号：<input type="text" id="userID" name="userID"><span id="checkID">请输入手机号</span><br>
-        密　  码：<input type="password" id="userPassword" name="userPassword"><br>
-        验 证 码：<input type="text" id="checkWord" name="checkWord" maxlength="4"> <a id="check" name="check" class="check"></a><br>
-        <button id="btnOK">确定</button> <a href="../static/userRegister.html">注册</a>
+<!doctype html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-HJdU3+e6qF6aTnQcF4vQ0fK0W9h1+HqZq2kGqk6Dji9b6kNv4vHK5bL3nBdXZsH8zJQ0Z4/5T0yFZL+HtS3RgA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    body {
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+    color: #333;
+    }
+    .container {
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            text-align: center;
+    }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+    }
+        label {
+            display: inline-block;
+            margin-bottom: 10px;
+            font-weight: bold;
+    }
+        input[type="text"],
+        input[type="password"] {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            font-size: 16px;
+            background-color: #f9f9f9;
+    }
+    #error {
+            color: red;
+            margin-bottom: 10px;
+    
+    }
+    .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+    transition: all 0.2s ease-in-out;
+    }
+    .btn:hover {
+            background-color: #3e8e41;
+    }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-size: 14px;
+    }
+        a:hover {
+            text-decoration: underline;
+    }
+        i {
+            margin-right: 5px;
+    }
+    </style></head><body>
+    <div class="container">
+    <h1>用户登录</h1>
+    <label for="userID">账号:</label>
+    <input type="text" id="userID" name="userID">
+    <div id="error"></div>
+    <label for="userPassword">密码:</label>
+    <input type="password" id="userPassword" name="userPassword">
+    <label for="checkWord">验证码:</label>
+    <div class="flex">
+    <input type="text" id="checkWord" name="checkWord" maxlength="4">
+    <a id="check" name="check" class="check"></a><br>
+    </div>
+    <button id="btnOK" class="btn">登录</button>
+    <a href="../static/userRegister.html">注册</a>
+    </div>
         <script type="text/javascript">
             $("#userID").keyup(function(e){
                 if  (e.keyCode == 13) {
@@ -61,13 +135,13 @@
                 var word="";
                 var key=['0','1','2','3','4','5','6','7','8','9',
                         'a','b','c','d','e','f','g','h','i','j',
-                        'k','l','m','n','o','p','q','r','s','t',
+                        'k','m','n','o','p','q','r','s','t',
                         'u','v','w','x','y','z','A','B','C','D',
-                        'E','F','G','H','I','J','K','L','M','N',
+                        'E','F','G','H','J','K','L','M','N',
                         'O','P','Q','R','S','T','U','V','W','X',
                         'Y','Z']
                 for(var i=0;i<4;i=i+1){
-                    var result=Math.floor(Math.random()*(62));
+                    var result=Math.floor(Math.random()*(60));
                     word=word+key[result];
                 }
                 $("#check").html(word);
@@ -75,3 +149,6 @@
         </script>
     </body>
 </html>
+
+
+

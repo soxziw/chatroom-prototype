@@ -2,13 +2,13 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>踢人：{{userName|safe}}</title>
+  <title>加人：{{userName|safe}}</title>
 	<script type="text/javascript"src="./js/jquery-3.6.0.min.js"></script>
  </head>
  <body>
-    <form method="post" action="/deleteAndReturn">
+    <form method="post" action="/addAndReturn">
 	    <p>群名：{{groupName|safe}}</p>
-        <p>踢人:
+        <p>加人:
         {{allUser|safe}}
         </p>
 	    <p><input type="submit" value="提交"/></p>
