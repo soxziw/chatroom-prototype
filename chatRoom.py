@@ -24,7 +24,7 @@ def root():
 
 @webApp.route("/login",methods=('post',))
 def login():
-    global curUserID, curUserName, curGroupID, curGroupName
+    global curUserID, curUserName
     userID = request.form["userID"]
     userPassword = request.form["userPassword"]
     checkState = userTab.login(userID, userPassword)
@@ -33,13 +33,6 @@ def login():
         curUserID = userID
         curUserName = userTab.getUser(userID)['name']
         print(curUserID)
-
-    group_id_list = ugTab.getGID(curUserID)
-    if len(group_id_list) > 0:
-        curGroupID = group_id_list[0]
-        curGroupName = groupTab.getName(curGroupID)
-    else:
-        curGroupName = ""
 
     return [checkState,]
 
