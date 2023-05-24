@@ -28,6 +28,7 @@ dbConn = pymysql.connect(
     database="chat", 
     charset="utf8", 
     autocommit=True)
+
 '''
 dbConn = pymysql.connect(
     host='127.0.0.1', 
@@ -38,12 +39,12 @@ dbConn = pymysql.connect(
     charset="utf8", 
     autocommit=True)
 '''
+
 # cursor = dbConn.cursor()
 # sqllist = open('./chatRoom.sql', 'r').read().split(';')
 # for sql in sqllist[0:]:
 #     cursor.execute(sql)
 # cursor.close()
-
 
 cursorUSER = dbConn.cursor()
 cursorGROUP = dbConn.cursor()

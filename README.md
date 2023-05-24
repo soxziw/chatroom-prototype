@@ -11,7 +11,7 @@ database midterm course project
 8. 加入群聊
 9. 踢出群聊
 10. 发送群聊消息
-11. 搜索群用户消息
+11. 显示群用户消息
 12. 搜索全局消息
 13. （透明）显示全部好友
 14. （透明）显示全部私聊消息
@@ -33,13 +33,15 @@ database midterm course project
    4. getUID(groupID) : string[]
    5. getGID(optUID) : string[]
 3. 群表：groupID(groupName_timestamp) groupName
-   1. build(groupName) : string(groupID)
-   2. changeName(groupID, optUID) : bool
+   1. refreshGroupID() : no return
+   2. build(groupName) : string(groupID)
+   3. changeName(groupID, optUID) : bool
 4. 消息表：msgID(msg_timestamp) groupID userID msg
-   1. writeMsg(groupID, msg, optUID) : bool
-   2. getGMsg(groupID, optUID) : list[dict[]]
-   3. getGUMsg(groupID, userID, optUID) : list[dict[]]
-   4. getMsg(subMsg, optUID) : list[dict[]]
+   1. refreshMsgID() : no return
+   2. writeMsg(groupID, msg, optUID) : bool
+   3. getGMsg(groupID, optUID) : list[dict[]]
+   4. getGUMsg(groupID, userID, optUID) : list[dict[]]
+   5. getMsg(subMsg, optUID) : list[dict[]]
 5. 好友表：userID friendID status
    1. apply(userID, optUID) : bool
    2. agree(userID, optUID) : bool

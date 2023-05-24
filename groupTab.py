@@ -3,6 +3,18 @@ import dbBase
 
 groupID = 0
 
+# 更新最新群编号
+# no return
+def refreshGroupID():
+    global groupID
+    sql = "SELECT MAX(groupID) FROM CHATGROUP"
+    status = dbBase.cursorGROUP.execute(sql)
+    result = dbBase.cursorGROUP.fetchone()
+    if result[0]:
+        groupID = result[0] + 1
+        return
+    groupID = 0
+   
 # 创建群
 # return int
 def build(groupName):

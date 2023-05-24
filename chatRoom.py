@@ -19,20 +19,22 @@ def root():
     global curUserName, curGroupName
     curUserName = ""
     curGroupName = ""
+    groupTab.refreshGroupID()
+    messageTab.refreshMsgID()
     return redirect("/static/userLogin.html")
 
 @webApp.route("/login",methods=('post',))
 def login():
+    global curUserID, curUserName
     userID = request.form["userID"]
     userPassword = request.form["userPassword"]
     checkState = userTab.login(userID, userPassword)
 
     if checkState == True: 
-        global curUserID
-        global curUserName
         curUserID = userID
         curUserName = userTab.getUser(userID)['name']
         print(curUserID)
+
     return [checkState,]
 
 @webApp.route("/register",methods=('post',))
@@ -122,7 +124,7 @@ def loadChatData():
     curGroupName = request.form["groupName"]
     group_id_list = ugTab.getGID(curUserID)
     curGroupID = group_id_list[int(request.form["groupID"])]
-    return redirect("/chatRoom")
+    return [True,]
 
 # 跳转到创建群聊网页
 @webApp.route("/createGroup") 

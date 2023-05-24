@@ -138,8 +138,10 @@
             $("#groupList").change(function(){
                 var groupName=$("#groupList").val();
                 var groupID=$("#groupList option:selected").attr('cnt');
-                $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName});
-                document.location.reload(true);
+                $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName}, function(rtn,){
+                    if (rtn=="true")
+                        location.reload(true);
+                });
             });
             $("#userName").keyup(function(e){
                 if (e.keyCode==13) {
