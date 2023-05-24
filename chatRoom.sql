@@ -20,7 +20,7 @@ drop table if exists USER;
 create table CHATGROUP
 (
    groupID              int not null,
-   groupName            varchar(20) not null,
+   groupName            varchar(30) not null,
    primary key (groupID)
 );
 
@@ -29,8 +29,8 @@ create table CHATGROUP
 /*==============================================================*/
 create table FRIENDS
 (
-   userID               char(20) not null,
-   friendID             char(20) not null,
+   userID               char(11) not null,
+   friendID             char(11) not null,
    status               char(7) not null,
    primary key (userID, friendID)
 );
@@ -41,7 +41,7 @@ create table FRIENDS
 create table MESSAGE
 (
    msgID                int not null,
-   userID               char(20) not null,
+   userID               char(11) not null,
    groupID              int not null,
    msg                  longtext not null,
    primary key (msgID)
@@ -52,7 +52,7 @@ create table MESSAGE
 /*==============================================================*/
 create table UG
 (
-   userID               char(20) not null,
+   userID               char(11) not null,
    groupID              int not null,
    status               char(7) not null,
    primary key (userID, groupID)
@@ -63,7 +63,7 @@ create table UG
 /*==============================================================*/
 create table USER
 (
-   userID               char(20) not null,
+   userID               char(11) not null,
    name                 varchar(20) not null,
    password             varchar(20) not null,
    primary key (userID)

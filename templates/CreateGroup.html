@@ -7,12 +7,21 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
  </head>
  <body>
-    <form method="post" action="/createAndReturn">
-	    <p>群名：<input type=text id="newGroupName" name="newGroupName" value="请输入群名" maxlength="8" size="30"/></p>
+    <form method="post" action="/createAndReturn" onsubmit="return validateForm()">
+	    <p>群名：<input type=text id="newGroupName" name="newGroupName" value="请输入群名" maxlength="30" size="30" onclick="if(this.value=='请输入群名'){this.value='';}" onblur="if(this.value=='') {this.value='请输入群名';}"/></p>
         <p>邀请:
         {{allUser|safe}}
         </p>
       <p><button type="submit"><i class="fas fa-paper-plane"></i>提交</button></form>
-  </script>
+    <script type="text/javascript">
+      function validateForm() {
+        var newGroupName = document.getElementById("newGroupName").value;
+        if (newGroupName.includes("|")) {
+          alert("群名不能包含'|'字符");
+          return false; // Prevent form submission
+        }
+        return true; // Allow form submission
+      }
+    </script>
  </body>
 </html>

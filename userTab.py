@@ -9,7 +9,7 @@ def getUser(userID):
     return {'userID': result[0], 'name': result[1], 'password': result[2]}
     
 def register(userID, name, password):
-    sql = "INSERT IGNORE INTO USER(userID, name, password) VALUES(%(userID)s, %(name)s, %(password)s)"
+    sql = "CALL REGISTER_USER(%(userID)s,%(name)s,%(password)s);"
     status = dbBase.cursorUSER.execute(sql, {'userID': userID, 'name': name, 'password': password,})
     if status != dbBase.INSERT.ONE:
         return False
@@ -25,8 +25,8 @@ def login(userID, password):
     return True
 
 def changeName(name, optUID):
-    sql = "UPDATE USER SET name = %(name)s WHERE userID = %(optUID)s"
-    status = dbBase.cursorUSER.execute(sql, {'name': name, 'optUID': optUID,})
+    sql = "CALL UPDATE_USER(%(name)s,%(userID)s);"
+    status = dbBase.cursorUSER.execute(sql, {'name': name, 'userID': optUID,})
     if status != dbBase.UPDATE.ONE:
         return False
     return True

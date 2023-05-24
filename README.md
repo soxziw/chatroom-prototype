@@ -39,10 +39,12 @@ database midterm course project
 4. 消息表：msgID(msg_timestamp) groupID userID msg
    1. refreshMsgID() : no return
    2. writeMsg(groupID, msg, optUID) : bool
-   3. getGMsg(groupID, optUID) : dict[]
-   4. getGUMsg(groupID, userID, optUID) : dict[]
-   5. getMsg(subMsg, optUID) : dict[]
+   3. getGMsg(groupID, optUID) : list[dict[]]
+   4. getGUMsg(groupID, userID, optUID) : list[dict[]]
+   5. getMsg(subMsg, optUID) : list[dict[]]
 5. 好友表：userID friendID status
    1. apply(userID, optUID) : bool
    2. agree(userID, optUID) : bool
-   3. getFriends(optUID) : dict[]
+   3. getFriends(optUID) : list[dict[]]
+
+### 需要在MySQL内执行`procedure.sql`脚本

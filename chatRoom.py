@@ -1,4 +1,5 @@
 from glob import glob
+from queue import Empty
 from flask import Flask, request, redirect, render_template 
 import groupTab, messageTab, userTab, ugTab, friendsTab
 
@@ -62,17 +63,28 @@ def changeName():
         print(userName)
     return [checkState,]
 
+def getChatName(group_id, curUserID):
+    group_name = groupTab.getName(group_id)
+    posDiv = group_name.find('|')
+    if posDiv != -1:
+        groupStatus = ugTab.getStatus(group_id, curUserID)
+        if groupStatus == "prvt0":
+            return userTab.getUser(group_name[0:posDiv])['name']
+        elif groupStatus == "prvt1":
+            return userTab.getUser(group_name[posDiv+1:])['name']
+    return group_name
 
 # 生成群聊选择器
 def groupSelectText(group_id_list, curGroupID):
-	text = ""
-	for cnt, group_id in enumerate(group_id_list):
-		group_name = groupTab.getName(group_id)
-		text = text + f"<option cnt={cnt} value=\"" + group_name + "\" "
-		if group_id == curGroupID:
-			text = text + "selected"
-		text = text + ">" + group_name + "</option>"
-	return text
+    global curUserID
+    text = ""
+    for cnt, group_id in enumerate(group_id_list):
+        group_name = getChatName(group_id, curUserID)
+        text = text + f"<option cnt={cnt} value=\"" + group_name + "\" "
+        if group_id == curGroupID:
+            text = text + "selected"
+        text = text + ">" + group_name + "</option>"
+    return text
 
 # 聊天室
 @webApp.route("/chatRoom")
@@ -82,21 +94,26 @@ def chatRoom():
     group_id_list = ugTab.getGID(curUserID)
     chatData = ""
     otherData = ""
-    if curGroupName != "":
-        msg_dict = messageTab.getGMsg(curGroupID, curUserID)
-        print ("msg_dict:", msg_dict)
-        l = len(msg_dict['msg'])
-        for i in range(l):
-            tmp_user = userTab.getUser(msg_dict['userID'][i])
-            print("tmp_user", tmp_user)
-            tmp_user_name = tmp_user['name']
-            chatData = chatData + f"<i class=\"fas fa-comment\"></i> {tmp_user_name}: {msg_dict['msg'][i]}<br>"
-        otherData = otherData + """<form method="post" action="/sendAndReturn">
-                        <p><input type="text" id="message" name="message" value="请输入" maxlength="150" class="message"/></p>
-                        <p><button type="submit"><i class="fas fa-paper-plane"></i>发送</button></form>
-                        """
-        if ugTab.getStatus(curGroupID, curUserID) == 'high':
-            otherData = otherData + "<button id='deleteGroup'><i class=\"fas fa-user-times\"></i>踢人</button>"
+    if curGroupID == "" and len(group_id_list) != 0:
+        curGroupID = group_id_list[0]
+        curGroupName = getChatName(curGroupID, curUserID)
+    msg_dict = messageTab.getGMsg(curGroupID, curUserID)
+    print ("msg_dict:", msg_dict)
+    l = len(msg_dict['msg'])
+    for i in range(l):
+        tmp_user = userTab.getUser(msg_dict['userID'][i])
+        print("tmp_user", tmp_user)
+        tmp_user_name = tmp_user['name']
+        chatData = chatData + f"<i class=\"fas fa-comment\"></i> {tmp_user_name}: {msg_dict['msg'][i]}<br>"
+    otherData = otherData + """<form method="post" action="/sendAndReturn">
+                    <p><input type="text" id="message" name="message" value="请输入" maxlength="150" class="message" onclick="if(this.value=='请输入'){this.value='';}" onblur="if(this.value=='') {this.value='请输入';}"/></p>
+                    <p><button type="submit"><i class="fas fa-paper-plane"></i>发送</button></form>
+                    """
+    ugStatus = ugTab.getStatus(curGroupID, curUserID)
+    if ugStatus == 'high':
+        otherData = otherData + "<button id='deleteGroup'><i class=\"fas fa-user-times\"></i>踢人</button>"
+        otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
+    elif ugStatus == 'low':
         otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
     return render_template("ChatRoom.html", userName=curUserName, group=groupSelectText(group_id_list, curGroupID), chatData=chatData, otherData=otherData)
 
@@ -106,7 +123,6 @@ def loadChatData():
     global curUserID, curGroupName, curGroupID
     curGroupName = request.form["groupName"]
     group_id_list = ugTab.getGID(curUserID)
-    # print("curGroupName:", curGroupName, "group_id_list:", group_id_list, "groupID:", request.form["groupID"])
     curGroupID = group_id_list[int(request.form["groupID"])]
     return [True,]
 
@@ -234,6 +250,12 @@ def agreeFriends():
     checkState = friendsTab.agree(userID, curUserID)
 
     if checkState == True: 
+        group_name = f"{userID}|{curUserID}"
+        print(group_name)
+        group_id = groupTab.build(group_name)
+        print(group_id)
+        ugTab.addUsers(group_id, [curUserID], curUserID, 'prvt0')
+        ugTab.addUsers(group_id, [userID], curUserID, 'prvt1')
         print(userID)
     return [checkState,]
 
@@ -250,7 +272,6 @@ def newFriends():
             appData = appData +"""<script type="text/javascript">
                                     $("#agree_""" + FID + """").click(function(){
                                         var userID = $("#app_""" + FID + """").text();
-                                        alert(userID);
                                         $.post("/agreeFriends",{userID:userID},function(rtn,){
                                             if (rtn=="true") {
                                                 alert("添加好友成功！");

@@ -1,7 +1,7 @@
 import dbBase
     
 def addUsers(groupID, userIDs, optUID, status):
-    sql = "INSERT INTO UG(userID, groupID, status) VALUES(%(userID)s, %(groupID)s, %(status)s)"
+    sql = "CALL ADD_USER_INTO_GROUP(%(userID)s,%(groupID)s,%(status)s);"
     db_status = 1
     for userID in userIDs:
         db_status = db_status & dbBase.cursorUG.execute(sql, {'userID': userID, 'groupID': groupID, 'status': status})
@@ -18,7 +18,7 @@ def getStatus(groupID, optUID):
     return result[0]
 
 def deleteUser(groupID, userID, optUID):
-    sql = "DELETE FROM UG WHERE userID = %(userID)s AND groupID = %(groupID)s"
+    sql = "CALL DELETE_USER_FROM_GROUP %(userID)s,%(groupID)s);"
     status = dbBase.cursorUG.execute(sql, {'userID': userID, 'groupID': groupID,})
     if status == dbBase.DELETE.FAIL:
         return False
