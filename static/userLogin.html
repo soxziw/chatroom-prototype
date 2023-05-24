@@ -71,9 +71,8 @@
     </style></head><body>
     <div class="container">
     <h1>用户登录</h1>
-    <label for="userID">账号:</label>
+    <label for="userID">账号（手机号）:</label>
     <input type="text" id="userID" name="userID">
-    <div id="error"></div>
     <label for="userPassword">密码:</label>
     <input type="password" id="userPassword" name="userPassword">
     <label for="checkWord">验证码:</label>
@@ -85,44 +84,49 @@
     <a href="../static/userRegister.html">注册</a>
     </div>
         <script type="text/javascript">
-            $("#userID").keyup(function(e){
-                if  (e.keyCode == 13) {
-                    var num = ['0','1','2','3','4','5','6','7','8','9']
-                    // 从input等输入组件取得数据，用val()，其他元素用html()
-                    // if (inputData.length==0)return false;
-                    var inputData = $(this).val();
-                    if (inputData.length != 11) {
-                        $("#checkID")[0].style.color = 'red';
+            $("#userID").blur(function(){
+                var num = ['0','1','2','3','4','5','6','7','8','9']
+                // 从input等输入组件取得数据，用val()，其他元素用html()
+                // if (inputData.length==0)return false;
+                var inputData = $(this).val();
+                if (inputData.length != 11) {
+                    $("#userID")[0].style.color = 'red';
+                    return;
+                }
+                for (var i = 0; i < 11; i = i + 1) {
+                    if (num.indexOf(inputData[i]) == -1) {
+                        $("#userID")[0].style.color = 'red';
                         return;
                     }
-                    for (var i = 0; i < 11; i = i + 1) {
-                        if (num.indexOf(inputData[i]) == -1) {
-                            $("#checkID")[0].style.color = 'red';
-                            return;
-                        }
-                    }
-                    $("#checkID")[0].style.color = 'green';
+                }
+                $("#userID")[0].style.color = 'black';
+            });
+            $("#userID").keyup(function(e){
+                if (e.keyCode == 13) {
                     $("#userPassword").focus();//获得焦点
                 }
             });
             $("#userPassword").keyup(function(e){
-                if(e.keyCode==13)$("#checkWord").focus();
+                if (e.keyCode == 13) {
+                    $("#checkWord").focus();
+                }
             });
             $("#checkWord").keyup(function(e){
-                if(e.keyCode==13)$("#btnOK").click();
+                if (e.keyCode == 13) {
+                    $("#btnOK").click();
+                }
             });
             $("#btnOK").click(function(){
-                var userID=$("#userID").val();
-                var userPassword=$("#userPassword").val();
-                var checkWord=$("#checkWord").val();
-                var check= $("#check").html();
-                if(checkWord!=check){
+                var userID = $("#userID").val();
+                var userPassword = $("#userPassword").val();
+                var checkWord = $("#checkWord").val();
+                var check = $("#check").html();
+                if (checkWord != check) {
                     alert("验证码错误！");
                     location.reload();
-                }
-                else{
+                } else {
                     $.post("/login",{userID:userID,userPassword:userPassword},function(rtn,){
-                        if (rtn=="true") {
+                        if (rtn == "true") {
                             alert("登录成功！");
                             location.replace("/chatRoom");
                         } else {
@@ -131,18 +135,18 @@
                     });
                 }
             });
-            window.onload=function(){
-                var word="";
-                var key=['0','1','2','3','4','5','6','7','8','9',
-                        'a','b','c','d','e','f','g','h','i','j',
-                        'k','m','n','o','p','q','r','s','t',
-                        'u','v','w','x','y','z','A','B','C','D',
-                        'E','F','G','H','J','K','L','M','N',
-                        'O','P','Q','R','S','T','U','V','W','X',
-                        'Y','Z']
-                for(var i=0;i<4;i=i+1){
-                    var result=Math.floor(Math.random()*(60));
-                    word=word+key[result];
+            window.onload = function(){
+                var word = "";
+                var key = ['0','1','2','3','4','5','6','7','8','9',
+                            'a','b','c','d','e','f','g','h','i','j',
+                            'k','m','n','o','p','q','r','s','t',
+                            'u','v','w','x','y','z','A','B','C','D',
+                            'E','F','G','H','J','K','L','M','N',
+                            'O','P','Q','R','S','T','U','V','W','X',
+                            'Y','Z']
+                for(var i = 0; i < 4; i = i + 1){
+                    var result = Math.floor(Math.random() * (60));
+                    word = word + key[result];
                 }
                 $("#check").html(word);
             }
