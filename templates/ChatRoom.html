@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>聊天室：{{userName|safe}}</title>
-        <meta http-equiv="refresh" content="3">
+        <meta http-equiv="refresh" content="30">
         <script type="text/javascript" src="../static/js/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
@@ -135,10 +135,13 @@
         </div>
             {{otherData|safe}}
         <script type="text/javascript">
-            $("#groupList").click(function(){
+            $("#groupList").change(function(){
                 var groupName=$("#groupList").val();
                 var groupID=$("#groupList option:selected").attr('cnt');
-                $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName});
+                $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName}, function(rtn,){
+                    if (rtn=="true")
+                        location.reload(true);
+                });
             });
             $("#userName").keyup(function(e){
                 if (e.keyCode==13) {

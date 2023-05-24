@@ -10,6 +10,18 @@ def tuple2dict(tmp):
         result[colName[i]] = [x[i] for x in tmp]
     return result
 
+# 更新最新消息号
+# no return
+def refreshMsgID():
+    global messageID
+    sql = "SELECT MAX(msgID) FROM MESSAGE"
+    status = dbBase.cursorMESSAGE.execute(sql)
+    result = dbBase.cursorMESSAGE.fetchone()
+    if result[0]:
+        messageID = result[0] + 1
+        return
+    messageID = 0
+
 # 写消息
 # return bool
 def writeMsg(groupID, msg, optUID):
