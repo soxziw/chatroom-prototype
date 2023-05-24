@@ -44,3 +44,5 @@ database midterm course project
    1. apply(userID, optUID) : bool
    2. agree(userID, optUID) : bool
    3. getFriends(optUID) : list[dict[]]
+
+### 需要在MySQL内执行`procedure.sql`脚本
