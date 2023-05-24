@@ -18,7 +18,7 @@ def writeMsg(groupID, msg, optUID):
     print(sql)
     try:
         if dbBase.cursorMESSAGE.execute(sql):
-            print(f'写消息成功')
+            print('写消息成功')
             messageID = messageID + 1
             dbBase.dbConn.commit()  
             return True          

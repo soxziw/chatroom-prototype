@@ -19,7 +19,7 @@ class DELETE():
     FAIL = 0
     ONE = 1
     
-'''
+
 dbConn = pymysql.connect(
     host='localhost', 
     port=3306, 
@@ -37,12 +37,12 @@ dbConn = pymysql.connect(
     database="chat", 
     charset="utf8", 
     autocommit=True)
-
-cursor = dbConn.cursor()
-sqllist = open('./chatRoom.sql', 'r').read().split(';')
-for sql in sqllist[0:-1]:
-    cursor.execute(sql)
-cursor.close()
+'''
+# cursor = dbConn.cursor()
+# sqllist = open('./chatRoom.sql', 'r').read().split(';')
+# for sql in sqllist[0:]:
+#     cursor.execute(sql)
+# cursor.close()
 
 
 cursorUSER = dbConn.cursor()

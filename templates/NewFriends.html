@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>添加好友：{{userName|safe}}</title>
-        <meta http-equiv="refresh" content="10">
+        <meta http-equiv="refresh" content="30">
         <script type="text/javascript"src="../static/js/jquery-3.6.0.min.js"></script>
         <style>
             .message{
@@ -13,13 +13,15 @@
         </style>
     </head>
     <body>
-        申请好友：<input type="text" id="friendUID" name="friendUID" value="请输入好友ID">
+        申请好友：<input type="text" id="friendUID" name="friendUID" value="请输入好友ID" onclick="if(this.value=='请输入好友ID'){this.value='';}" onblur="if(this.value=='') {this.value='请输入好友ID';}"/>
         <button id="apply">申请</button><button id="returnChat">返回聊天</button><br>
         新的朋友：<div id="appList" name="appList"></div><br>
         {{appData|safe}}
         <script type="text/javascript">
             $("#friendUID").keyup(function(e){
-                if(e.keyCode==13)$("#apply").click();
+                if (e.keyCode == 13) {
+                    $("#apply").click();
+                }
             });
             $("#apply").click(function(){
                 var userID = $("#friendUID").val();

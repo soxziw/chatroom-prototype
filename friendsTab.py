@@ -5,7 +5,7 @@ def apply(userID, optUID):
     status = dbBase.cursorFRIENDS.execute(sql, {'userID': userID, 'optUID': optUID,})
     if status != dbBase.SELECT.FAIL:
         return True
-    sql = "INSERT IGNORE INTO FRIENDS(userID, friendID, status) VALUES(%(userID)s, %(optUID)s, 'UNSET')"
+    sql = "CALL INSERT_FRIEND( %(userID)s,%(optUID)s,'UNSET');"
     status = dbBase.cursorFRIENDS.execute(sql, {'userID': userID, 'optUID': optUID,})
     if status != dbBase.INSERT.FAIL:
         return True
@@ -16,9 +16,9 @@ def agree(userID, optUID):
     status = dbBase.cursorFRIENDS.execute(sql, {'userID': userID, 'optUID': optUID,})
     if status != dbBase.SELECT.ONE:
         return False
-    sql = "UPDATE FRIENDS SET status = 'SET' WHERE (userID = %(optUID)s AND friendID = %(userID)s)"
+    sql = "CALL UPDATE_FRIEND(%(optUID)s,%(userID)s,'SET');"
     status1 = dbBase.cursorFRIENDS.execute(sql, {'userID': userID, 'optUID': optUID,})
-    sql = "INSERT IGNORE INTO FRIENDS(userID, friendID, status) VALUES(%(userID)s, %(optUID)s, 'SET')"
+    sql = "CALL INSERT_FRIEND(%(userID)s,%(optUID)s,'SET');"
     status2 = dbBase.cursorFRIENDS.execute(sql, {'userID': userID, 'optUID': optUID,})
     
     if status1 != dbBase.UPDATE.ONE or status2 == dbBase.INSERT.FAIL:

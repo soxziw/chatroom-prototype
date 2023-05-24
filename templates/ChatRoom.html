@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>聊天室：{{userName|safe}}</title>
-        <meta http-equiv="refresh" content="3">
+        <meta http-equiv="refresh" content="30">
         <script type="text/javascript" src="../static/js/jquery-3.6.0.min.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
         <style>
@@ -125,7 +125,7 @@
         <div class="form-group">
             <form method="post" action="/searchMsg">
                 <div class="input-group">
-                    <input type="text" id="search" name="search" value="请输入" maxlength="150" class="message"/>
+                    <input type="text" id="search" name="search" value="请输入" maxlength="150" class="message" onclick="if(this.value=='请输入'){this.value='';}" onblur="if(this.value=='') {this.value='请输入';}"/>
                     <button type="submit" class="message-btn"><i class="fas fa-search"></i>搜索消息</button>
                 </div>
             </form>
@@ -135,10 +135,11 @@
         </div>
             {{otherData|safe}}
         <script type="text/javascript">
-            $("#groupList").click(function(){
+            $("#groupList").change(function(){
                 var groupName=$("#groupList").val();
                 var groupID=$("#groupList option:selected").attr('cnt');
                 $.post("/loadChatData",{'groupID':groupID, 'groupName':groupName});
+                document.location.reload(true);
             });
             $("#userName").keyup(function(e){
                 if (e.keyCode==13) {
