@@ -97,24 +97,25 @@ def chatRoom():
     if curGroupID == "" and len(group_id_list) != 0:
         curGroupID = group_id_list[0]
         curGroupName = getChatName(curGroupID, curUserID)
-    msg_dict = messageTab.getGMsg(curGroupID, curUserID)
-    print ("msg_dict:", msg_dict)
-    l = len(msg_dict['msg'])
-    for i in range(l):
-        tmp_user = userTab.getUser(msg_dict['userID'][i])
-        print("tmp_user", tmp_user)
-        tmp_user_name = tmp_user['name']
-        chatData = chatData + f"<i class=\"fas fa-comment\"></i> {tmp_user_name}: {msg_dict['msg'][i]}<br>"
-    otherData = otherData + """<form method="post" action="/sendAndReturn">
-                    <p><input type="text" id="message" name="message" value="请输入" maxlength="150" class="message" onclick="if(this.value=='请输入'){this.value='';}" onblur="if(this.value=='') {this.value='请输入';}"/></p>
-                    <p><button type="submit"><i class="fas fa-paper-plane"></i>发送</button></form>
-                    """
-    ugStatus = ugTab.getStatus(curGroupID, curUserID)
-    if ugStatus == 'high':
-        otherData = otherData + "<button id='deleteGroup'><i class=\"fas fa-user-times\"></i>踢人</button>"
-        otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
-    elif ugStatus == 'low':
-        otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
+    if curGroupID != "":
+        msg_dict = messageTab.getGMsg(curGroupID, curUserID)
+        print ("msg_dict:", msg_dict)
+        l = len(msg_dict['msg'])
+        for i in range(l):
+            tmp_user = userTab.getUser(msg_dict['userID'][i])
+            print("tmp_user", tmp_user)
+            tmp_user_name = tmp_user['name']
+            chatData = chatData + f"<i class=\"fas fa-comment\"></i> {tmp_user_name}: {msg_dict['msg'][i]}<br>"
+        otherData = otherData + """<form method="post" action="/sendAndReturn">
+                        <p><input type="text" id="message" name="message" value="请输入" maxlength="150" class="message" onclick="if(this.value=='请输入'){this.value='';}" onblur="if(this.value=='') {this.value='请输入';}"/></p>
+                        <p><button type="submit"><i class="fas fa-paper-plane"></i>发送</button></form>
+                        """
+        ugStatus = ugTab.getStatus(curGroupID, curUserID)
+        if ugStatus == 'high':
+            otherData = otherData + "<button id='deleteGroup'><i class=\"fas fa-user-times\"></i>踢人</button>"
+            otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
+        elif ugStatus == 'low':
+            otherData = otherData + "<button id='addGroup'><i class=\"fas fa-user-plus\"></i>加人</button>"
     return render_template("ChatRoom.html", userName=curUserName, group=groupSelectText(group_id_list, curGroupID), chatData=chatData, otherData=otherData)
 
 # 加载群聊数据
