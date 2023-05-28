@@ -40,11 +40,11 @@ dbConn = pymysql.connect(
     autocommit=True)
 '''
 
-# cursor = dbConn.cursor()
-# sqllist = open('./chatRoom.sql', 'r').read().split(';')
-# for sql in sqllist[0:]:
-#     cursor.execute(sql)
-# cursor.close()
+cursor = dbConn.cursor()
+sqllist = open('./chatRoom.sql', 'r').read().split(';')
+for sql in sqllist[0:-1]:
+    cursor.execute(sql)
+cursor.close()
 
 cursorUSER = dbConn.cursor()
 cursorGROUP = dbConn.cursor()
