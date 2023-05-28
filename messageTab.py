@@ -51,14 +51,10 @@ def getGMsg(groupID, optUID):
 # 获取groupID群聊中userID的所有消息
 # return dict
 def getGUMsg(groupID, userID, optUID):
-    sql1 = f"create view v as select * from MESSAGE where groupID = {groupID}"
-    sql2 = f"select * from v where userID = '{userID}'"
-    sql3 = "drop view v"
-    print(sql1, sql2, sql3)
-    dbBase.cursorMESSAGE.execute(sql1)
-    dbBase.cursorMESSAGE.execute(sql2)
+    sql = f"select * from MESSAGE where groupID = {groupID} and userID = '{userID}'"
+    print(sql)
+    dbBase.cursorMESSAGE.execute(sql)
     result = dbBase.cursorMESSAGE.fetchall()
-    dbBase.cursorMESSAGE.execute(sql3)
     return tuple2dict(result)
 
 # 获取optUID的所有群聊中包含某子句的所有消息
